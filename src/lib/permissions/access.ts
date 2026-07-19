@@ -171,10 +171,7 @@ export function can(
   target: AccessTarget,
 ): boolean {
   if (!ctx.profile.is_active) return false;
-  if (isPlatformAdmin(ctx)) {
-    if (target.locationId) return true;
-    return true;
-  }
+  if (isPlatformAdmin(ctx)) return true;
   if (!hasClientAccess(ctx, target.clientId)) return false;
 
   const permissions = effectivePermissions(ctx, target.clientId);
