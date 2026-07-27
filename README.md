@@ -63,6 +63,8 @@ cp .env.example .env.local
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | public | Anon / publishable key (RLS-protected) |
 | `NEXT_PUBLIC_APP_URL` | public | App base URL for auth redirects |
 | `SUPABASE_SERVICE_ROLE_KEY` | **server only** | Service-role key — never sent to the browser |
+| `OPENAI_API_KEY` | **server only** | Required for AI Presence Audit |
+| `OPENAI_MODEL` | **server only** | Optional; defaults to `gpt-4o-mini` |
 
 Also add `http://localhost:3000/**` under **Authentication → URL Configuration → Redirect URLs**.
 
