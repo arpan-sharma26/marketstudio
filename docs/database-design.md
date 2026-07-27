@@ -820,14 +820,24 @@ ________________________________________
 ________________________________________
 21. Implementation Status
 
-Phase 1 (project foundation) implements the following tables as SQL migrations under
-`supabase/migrations/`:
+Cloud project: https://supabase.com/dashboard/project/fzbffrbdbrcqyatxvbol
+
+Schema is applied to **Supabase Cloud** via `npm run db:push` (not a local Docker DB).
+
+Phase 1–2 migrations currently on cloud:
 
 •	profiles (0001_core_schema.sql)
 •	clients (0001_core_schema.sql)
 •	client_memberships (0001_core_schema.sql)
 •	client_locations (0001_core_schema.sql)
 •	location_memberships (0001_core_schema.sql)
+•	location_business_hours (20260720065853_location_business_hours.sql)
+•	Table grants for PostgREST roles (20260720063828_grants_and_privileges.sql)
+
+Pending push (local migration ready):
+
+•	audits (20260724120000_create_audits.sql) — AI Presence Audit storage; RLS enabled,
+	service-role writes only. Not yet tenant-scoped (prospect audits).
 
 Notes on the implementation:
 

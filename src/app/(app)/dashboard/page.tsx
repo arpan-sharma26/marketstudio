@@ -32,8 +32,11 @@ export default async function DashboardPage() {
         <Card>
           <CardTitle>Next steps</CardTitle>
           <CardDescription>
-            Client management, leads, content, and reporting will appear here as they are
-            built (see the implementation roadmap).
+            Manage daycare clients and locations from the{" "}
+            <a href="/clients" className="font-medium text-brand-700 hover:underline">
+              Clients
+            </a>{" "}
+            section. Brand profiles and leads come next.
           </CardDescription>
         </Card>
       </div>

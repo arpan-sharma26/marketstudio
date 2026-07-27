@@ -136,7 +136,7 @@ as part of the foundation task.
 
 ---
 
-## Phase 2 — Client & location management (OUT OF SCOPE for foundation)
+## Phase 2 — Client & location management (COMPLETE)
 
 **Scope:** CRUD for clients and locations, membership management UI, location
 business hours.

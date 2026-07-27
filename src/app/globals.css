@@ -9,3 +9,9 @@
 body {
   @apply bg-slate-50 text-slate-900 antialiased;
 }
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+  }
+}

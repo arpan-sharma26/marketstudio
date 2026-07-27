@@ -25,6 +25,10 @@ const serverEnvSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z
     .string()
     .min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
+  // Optional: only required to run the AI Presence Audit. Kept optional so the rest of
+  // the app boots without an OpenAI key configured.
+  OPENAI_API_KEY: z.string().min(1).optional(),
+  OPENAI_MODEL: z.string().min(1).optional(),
 });
 
 export type ClientEnv = z.infer<typeof clientEnvSchema>;
@@ -80,6 +84,8 @@ export function getServerEnv(): ServerEnv {
   if (!cachedServerEnv) {
     cachedServerEnv = parseServerEnv({
       SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+      OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+      OPENAI_MODEL: process.env.OPENAI_MODEL,
     });
   }
   return cachedServerEnv;

@@ -12,7 +12,7 @@ import {
 } from "@/lib/permissions/access";
 import type { AuthContext, ProfileSummary } from "@/lib/permissions/types";
 import type { Database } from "@/types/database";
-import type { Permission } from "@/types/roles";
+import { isClientRole, isPlatformRole, type Permission } from "@/types/roles";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -72,6 +72,7 @@ export async function loadAuthContext(): Promise<AuthContext | null> {
     ]);
 
   if (!profile) return null;
+  if (!isPlatformRole(profile.platform_role)) return null;
 
   let assignedClientIds: string[] = [];
   if (profile.platform_role === "account_manager") {
@@ -90,8 +91,28 @@ export async function loadAuthContext(): Promise<AuthContext | null> {
 
   return {
     profile: profileSummary,
-    memberships: memberships ?? [],
-    locationMemberships: locationMemberships ?? [],
+    memberships: (memberships ?? []).flatMap((membership) =>
+      isClientRole(membership.role)
+        ? [
+            {
+              client_id: membership.client_id,
+              role: membership.role,
+              is_active: membership.is_active,
+            },
+          ]
+        : [],
+    ),
+    locationMemberships: (locationMemberships ?? []).flatMap((membership) =>
+      isClientRole(membership.role)
+        ? [
+            {
+              client_id: membership.client_id,
+              location_id: membership.location_id,
+              role: membership.role,
+            },
+          ]
+        : [],
+    ),
     assignedClientIds,
   };
 }

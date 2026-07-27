@@ -8,7 +8,11 @@ interface NavItem {
   label: string;
 }
 
-const NAV_ITEMS: NavItem[] = [{ href: "/dashboard", label: "Dashboard" }];
+const NAV_ITEMS: NavItem[] = [
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/clients", label: "Clients" },
+  { href: "/audit", label: "AI Audit" },
+];
 
 interface AppShellProps {
   userName: string;
