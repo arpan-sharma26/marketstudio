@@ -33,7 +33,7 @@ A client may have:
 •	Multiple users
 •	Multiple campaigns
 •	Multiple leads
-•	Multiple brand profiles
+•	One primary brand profile (MVP; unique per client)
 •	Multiple integrations
 Every query involving client data must enforce tenant isolation.
 Row Level Security must be enabled on all client-owned tables.
@@ -190,6 +190,7 @@ ________________________________________
 Table: brand_profiles
 Purpose:
 Stores the approved marketing identity for a client.
+Constraint: unique `client_id` (one profile per client in MVP).
 Fields:
 •	id uuid primary key
 •	client_id uuid foreign key
@@ -833,9 +834,6 @@ Phase 1–2 migrations currently on cloud:
 •	location_memberships (0001_core_schema.sql)
 •	location_business_hours (20260720065853_location_business_hours.sql)
 •	Table grants for PostgREST roles (20260720063828_grants_and_privileges.sql)
-
-Pending push (local migration ready):
-
 •	audits (20260724120000_create_audits.sql) — AI Presence Audit storage; RLS enabled,
 	service-role writes only. Not yet tenant-scoped (prospect audits).
 

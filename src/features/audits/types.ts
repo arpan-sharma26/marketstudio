@@ -1,11 +1,11 @@
 export interface AuditInput {
   businessName: string;
+  country: string;
   city: string;
   websiteUrl: string;
   gbpUrl?: string;
   reviewCount?: number;
   averageRating?: number;
-  competitors?: string;
   notes?: string;
 }
 
@@ -35,6 +35,7 @@ export interface AuditResult {
   issues: AuditIssue[];
   quickWins: AuditQuickWin[];
   plan: AuditPlanItem[];
+  /** AI-identified local daycare competitors and how they compare. */
   competitorInsights: string[];
   recommendedPackage: RecommendedPackage;
   packageRationale: string;

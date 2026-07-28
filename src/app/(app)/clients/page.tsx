@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
+import { PendingNavLink } from "@/components/shared/pending-nav-link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { requireAuthContext } from "@/lib/auth";
@@ -89,7 +90,7 @@ export default async function ClientsPage({
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filtered.map((client) => (
-                <tr key={client.id}>
+                <tr key={client.id} className="hover:bg-slate-50/80">
                   <td className="px-4 py-3">
                     <div className="font-medium text-slate-900">{client.name}</div>
                     <div className="text-xs text-slate-500">{client.slug}</div>
@@ -97,12 +98,13 @@ export default async function ClientsPage({
                   <td className="px-4 py-3 capitalize text-slate-700">{client.status}</td>
                   <td className="px-4 py-3 text-slate-700">{client.timezone}</td>
                   <td className="px-4 py-3 text-right">
-                    <Link
+                    <PendingNavLink
                       href={`/clients/${client.id}`}
                       className="font-medium text-brand-700 hover:underline"
+                      pendingLabel="Opening client"
                     >
                       Open
-                    </Link>
+                    </PendingNavLink>
                   </td>
                 </tr>
               ))}

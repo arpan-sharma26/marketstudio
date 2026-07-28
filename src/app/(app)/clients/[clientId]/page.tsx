@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { ClientSubnav } from "@/components/shared/client-subnav";
 import { PageHeader } from "@/components/shared/page-header";
+import { PendingNavLink } from "@/components/shared/pending-nav-link";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ClientForm } from "@/features/clients/components/client-form";
 import {
@@ -28,10 +29,12 @@ export default async function ClientDetailPage({
     redirect("/unauthorized");
   }
 
-  const client = await getClient(clientId);
+  const [client, capabilities] = await Promise.all([
+    getClient(clientId),
+    getClientCapabilities(clientId),
+  ]);
   if (!client) notFound();
 
-  const capabilities = await getClientCapabilities(clientId);
   const locations = capabilities.canRead
     ? await listLocations(clientId).catch(() => [])
     : [];
@@ -97,12 +100,12 @@ export default async function ClientDetailPage({
             ) : (
               locations.map((location) => (
                 <li key={location.id}>
-                  <a
+                  <PendingNavLink
                     href={`/clients/${clientId}/locations/${location.id}`}
                     className="font-medium text-brand-700 hover:underline"
                   >
                     {location.name}
-                  </a>
+                  </PendingNavLink>
                   <div className="text-xs text-slate-500">
                     {location.city}, {location.province_code}
                   </div>

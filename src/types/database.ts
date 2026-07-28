@@ -59,6 +59,160 @@ export type Database = {
         }
         Relationships: []
       }
+      brand_profiles: {
+        Row: {
+          accent_colour: string | null
+          approved_at: string | null
+          approved_by: string | null
+          approved_claims: Json
+          approved_ctas: Json
+          brand_voice: string | null
+          business_summary: string | null
+          client_id: string
+          content_pillars: Json
+          created_at: string
+          id: string
+          logo_url: string | null
+          mission_statement: string | null
+          name: string
+          primary_colour: string | null
+          restricted_claims: Json
+          secondary_colour: string | null
+          status: string
+          target_audience: Json
+          unique_selling_points: Json
+          updated_at: string
+        }
+        Insert: {
+          accent_colour?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_claims?: Json
+          approved_ctas?: Json
+          brand_voice?: string | null
+          business_summary?: string | null
+          client_id: string
+          content_pillars?: Json
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          mission_statement?: string | null
+          name: string
+          primary_colour?: string | null
+          restricted_claims?: Json
+          secondary_colour?: string | null
+          status?: string
+          target_audience?: Json
+          unique_selling_points?: Json
+          updated_at?: string
+        }
+        Update: {
+          accent_colour?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_claims?: Json
+          approved_ctas?: Json
+          brand_voice?: string | null
+          business_summary?: string | null
+          client_id?: string
+          content_pillars?: Json
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          mission_statement?: string | null
+          name?: string
+          primary_colour?: string | null
+          restricted_claims?: Json
+          secondary_colour?: string | null
+          status?: string
+          target_audience?: Json
+          unique_selling_points?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_profiles_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brand_profiles_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: true
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_faqs: {
+        Row: {
+          answer: string
+          approved_at: string | null
+          approved_by: string | null
+          category: string | null
+          client_id: string
+          created_at: string
+          id: string
+          is_ai_usable: boolean
+          location_id: string | null
+          question: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          approved_at?: string | null
+          approved_by?: string | null
+          category?: string | null
+          client_id: string
+          created_at?: string
+          id?: string
+          is_ai_usable?: boolean
+          location_id?: string | null
+          question: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          category?: string | null
+          client_id?: string
+          created_at?: string
+          id?: string
+          is_ai_usable?: boolean
+          location_id?: string | null
+          question?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_faqs_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_faqs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_faqs_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "client_locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_locations: {
         Row: {
           accepting_registrations: boolean
@@ -373,6 +527,64 @@ export type Database = {
           },
         ]
       }
+      location_programs: {
+        Row: {
+          accepting_registrations: boolean
+          availability_notes: string | null
+          client_id: string
+          created_at: string
+          id: string
+          is_available: boolean
+          location_id: string
+          program_id: string
+          updated_at: string
+        }
+        Insert: {
+          accepting_registrations?: boolean
+          availability_notes?: string | null
+          client_id: string
+          created_at?: string
+          id?: string
+          is_available?: boolean
+          location_id: string
+          program_id: string
+          updated_at?: string
+        }
+        Update: {
+          accepting_registrations?: boolean
+          availability_notes?: string | null
+          client_id?: string
+          created_at?: string
+          id?: string
+          is_available?: boolean
+          location_id?: string
+          program_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_programs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "location_programs_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "client_locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "location_programs_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -411,6 +623,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      programs: {
+        Row: {
+          client_id: string
+          created_at: string
+          description: string | null
+          id: string
+          maximum_age_months: number | null
+          minimum_age_months: number | null
+          name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          maximum_age_months?: number | null
+          minimum_age_months?: number | null
+          name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          maximum_age_months?: number | null
+          minimum_age_months?: number | null
+          name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "programs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { loadAuthContext } from "@/lib/auth";
 
@@ -12,9 +14,15 @@ export default async function DashboardPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Welcome to Market Studio. The workspace foundation is in place.
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
+          Workspace
+        </p>
+        <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink">
+          Dashboard
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm text-ink-muted">
+          Welcome to Market Studio. Manage daycare clients, run presence audits, and build
+          toward enrolment outcomes.
         </p>
       </div>
 
@@ -22,10 +30,10 @@ export default async function DashboardPage() {
         <Card>
           <CardTitle>Your access</CardTitle>
           <CardDescription>
-            Platform role: <span className="font-medium">{ctx?.profile.platform_role}</span>
+            Platform role: <span className="font-medium text-ink">{ctx?.profile.platform_role}</span>
           </CardDescription>
           <CardDescription>
-            Client memberships: <span className="font-medium">{clientCount}</span>
+            Client memberships: <span className="font-medium text-ink">{clientCount}</span>
           </CardDescription>
         </Card>
 
@@ -33,10 +41,14 @@ export default async function DashboardPage() {
           <CardTitle>Next steps</CardTitle>
           <CardDescription>
             Manage daycare clients and locations from the{" "}
-            <a href="/clients" className="font-medium text-brand-700 hover:underline">
+            <Link href="/clients" className="font-semibold text-brand-700 hover:text-brand-800">
               Clients
-            </a>{" "}
-            section. Brand profiles and leads come next.
+            </Link>{" "}
+            section, or run an{" "}
+            <Link href="/audit" className="font-semibold text-brand-700 hover:text-brand-800">
+              AI Audit
+            </Link>
+            .
           </CardDescription>
         </Card>
       </div>

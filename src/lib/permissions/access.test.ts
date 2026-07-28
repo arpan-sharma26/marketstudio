@@ -141,17 +141,21 @@ describe("named permissions by role", () => {
   it("gives client_admin approval rights", () => {
     expect(hasClientRole(clientAdminCtx, CLIENT_A, ["client_admin"])).toBe(true);
     expect(can(clientAdminCtx, "content.approve", { clientId: CLIENT_A })).toBe(true);
+    expect(can(clientAdminCtx, "brand.manage", { clientId: CLIENT_A })).toBe(true);
+    expect(can(clientAdminCtx, "brand.approve", { clientId: CLIENT_A })).toBe(true);
     expect(can(clientAdminCtx, "membership.manage", { clientId: CLIENT_A })).toBe(true);
   });
 
   it("limits viewers to read-only permissions", () => {
     expect(can(viewerCtx, "lead.read", { clientId: CLIENT_A })).toBe(true);
     expect(can(viewerCtx, "lead.update", { clientId: CLIENT_A })).toBe(false);
+    expect(can(viewerCtx, "brand.manage", { clientId: CLIENT_A })).toBe(false);
     expect(can(viewerCtx, "content.approve", { clientId: CLIENT_A })).toBe(false);
   });
 
   it("prevents location managers from approving content", () => {
     expect(can(locationManagerCtx, "content.approve", { clientId: CLIENT_A })).toBe(false);
+    expect(can(locationManagerCtx, "brand.approve", { clientId: CLIENT_A })).toBe(false);
     expect(can(locationManagerCtx, "lead.update", { clientId: CLIENT_A })).toBe(true);
   });
 });

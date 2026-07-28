@@ -1,6 +1,6 @@
 # Market Studio — Development Status
 
-_Last updated: 2026-07-24 (AI Presence Audit ported from legacy prototype)_
+_Last updated: 2026-07-27 (Phase 3 brand profiles, FAQs & programs)_
 
 ## Database target
 
@@ -9,7 +9,7 @@ Migrations are pushed with `npm run db:push`. Do not rely on a local Docker Supa
 
 ## Current phase
 
-**Phase 2 complete.** AI Presence Audit (legacy Module 1) has been ported into this codebase.
+**Phase 3 complete.** Brand profiles, client FAQs, programs, and location-program links are live.
 
 ## Status summary
 
@@ -17,20 +17,22 @@ Migrations are pushed with `npm run db:push`. Do not rely on a local Docker Supa
 | --- | --- |
 | Phase 0–1 foundation & auth | Done |
 | Phase 2 client / location / membership management | Done |
-| AI Presence Audit (ported from `C:\Users\arpan\projects\market-studio`) | Code integrated — **run `npm run db:push` to apply `audits` table** |
-| Tests | 40 passing |
+| Phase 3 brand profiles / FAQs / programs | Done |
+| AI Presence Audit (ported early) | Done — `audits` table on cloud |
+| Tests | Vitest suite for permissions, schemas, brand helpers |
 
 ## Verification
 
-- `npm run typecheck` — pass
-- `npm run test` — 40 tests passing
-- Cloud: Phase 1–2 migrations applied; `audits` migration pending push
+- `npm run typecheck`
+- `npm run test`
+- Cloud migrations through `20260727184446_brand_profiles_faqs_programs`
 
 ## How to try it
 
-1. Sign in as `admin@marketstudio.test` / `MarketStudio!Dev123`
-2. Open **Clients** or **AI Audit** in the sidebar
-3. For the audit tool: enter a prospect's details (or Load sample) and generate
+1. Sign in as `admin@marketstudio.test` / `MarketStudio!Dev123` (or `owner@bloomingsteps.test`)
+2. Open **Clients → Blooming Steps → Brand / FAQs / Programs**
+3. Edit brand claims, add FAQs, link programs to locations
+4. Re-seed with `npm run db:seed` for sample brand/FAQ/program data
 
 ## Known limitations
 
@@ -39,8 +41,9 @@ Migrations are pushed with `npm run db:push`. Do not rely on a local Docker Supa
 - Client list search is in-memory (fine for MVP scale).
 - No pagination yet on clients/locations/members lists.
 - Audits are prospect-scoped (no `client_id` yet) and written via service role only.
+- Logo upload not built yet (logo URL field only).
+- Location-program availability notes are stored but not edited in a dedicated UI yet.
 
 ## Next task
 
-1. Run `npm run db:push` then `npm run db:types` to finish the audits table on cloud.
-2. **Phase 3 — Brand profiles, FAQs & programs** (see `docs/implementation-roadmap.md`).
+**Phase 4 — Client onboarding** (see `docs/implementation-roadmap.md`).

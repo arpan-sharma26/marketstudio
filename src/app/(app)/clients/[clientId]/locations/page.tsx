@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { ClientSubnav } from "@/components/shared/client-subnav";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
+import { PendingNavLink } from "@/components/shared/pending-nav-link";
 import { Button } from "@/components/ui/button";
 import { getClient, getClientCapabilities } from "@/features/clients/queries";
 import { listLocations } from "@/features/locations/queries";
@@ -80,12 +81,13 @@ export default async function ClientLocationsPage({
                   </td>
                   <td className="px-4 py-3 capitalize text-slate-700">{location.status}</td>
                   <td className="px-4 py-3 text-right">
-                    <Link
+                    <PendingNavLink
                       href={`/clients/${clientId}/locations/${location.id}`}
                       className="font-medium text-brand-700 hover:underline"
+                      pendingLabel="Opening location"
                     >
                       Open
-                    </Link>
+                    </PendingNavLink>
                   </td>
                 </tr>
               ))}

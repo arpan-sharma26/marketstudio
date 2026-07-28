@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { CityCombobox } from "@/features/audits/components/city-combobox";
+import { CountryCombobox } from "@/features/audits/components/country-combobox";
 import type { AuditInput } from "@/features/audits/types";
 
 interface AuditFormProps {
@@ -11,23 +14,23 @@ interface AuditFormProps {
 
 const defaultValues: AuditInput = {
   businessName: "",
+  country: "Canada",
   city: "",
   websiteUrl: "",
   gbpUrl: "",
   reviewCount: undefined,
   averageRating: undefined,
-  competitors: "",
   notes: "",
 };
 
 const sampleDaycare: AuditInput = {
-  businessName: "Sunshine Early Learning Center",
+  businessName: "Blooming Steps Daycare",
+  country: "Canada",
   city: "Calgary, AB",
   websiteUrl: "https://example-daycare.com",
   gbpUrl: "https://maps.google.com",
   reviewCount: 24,
   averageRating: 4.3,
-  competitors: "Bright Beginnings Preschool, Little Sprouts Academy",
   notes: "Enrollment push for September. Wants more tour bookings.",
 };
 
@@ -50,7 +53,7 @@ export function AuditForm({ onSubmit, loading }: AuditFormProps) {
         <button
           type="button"
           onClick={() => setForm(sampleDaycare)}
-          className="text-xs font-medium text-brand-600 hover:text-brand-700"
+          className="text-xs font-semibold text-brand-700 hover:text-brand-800"
         >
           Load sample
         </button>
@@ -62,17 +65,33 @@ export function AuditForm({ onSubmit, loading }: AuditFormProps) {
           value={form.businessName}
           onChange={(e) => updateField("businessName", e.target.value)}
           className={inputClass}
-          placeholder="Sunshine Early Learning Center"
+          placeholder="Blooming Steps Daycare"
+        />
+      </Field>
+
+      <Field label="Country">
+        <CountryCombobox
+          required
+          disabled={loading}
+          value={form.country}
+          onChange={(country) => {
+            setForm((current) => ({
+              ...current,
+              country,
+              // Clear city when country changes so suggestions stay in sync.
+              city: country === current.country ? current.city : "",
+            }));
+          }}
         />
       </Field>
 
       <Field label="City">
-        <input
+        <CityCombobox
           required
+          disabled={loading}
+          country={form.country}
           value={form.city}
-          onChange={(e) => updateField("city", e.target.value)}
-          className={inputClass}
-          placeholder="Calgary, AB"
+          onChange={(city) => updateField("city", city)}
         />
       </Field>
 
@@ -132,15 +151,6 @@ export function AuditForm({ onSubmit, loading }: AuditFormProps) {
         </Field>
       </div>
 
-      <Field label="Competitors">
-        <input
-          value={form.competitors ?? ""}
-          onChange={(e) => updateField("competitors", e.target.value)}
-          className={inputClass}
-          placeholder="Competitor A, Competitor B"
-        />
-      </Field>
-
       <Field label="Notes">
         <textarea
           value={form.notes ?? ""}
@@ -150,23 +160,31 @@ export function AuditForm({ onSubmit, loading }: AuditFormProps) {
         />
       </Field>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-xl bg-brand-600 px-4 py-3 font-medium text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {loading ? "Generating audit..." : "Generate AI audit"}
-      </button>
+      <p className="text-xs text-ink-muted">
+        Competitors are discovered automatically from the city and country — you do not need
+        to enter them.
+      </p>
+
+      <div className="sticky bottom-0 -mx-6 mt-2 border-t border-slate-200/80 bg-white px-6 pb-1 pt-4">
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full py-3 text-base"
+          aria-disabled={loading}
+        >
+          {loading ? "Generating audit..." : "Generate AI audit"}
+        </Button>
+      </div>
     </form>
   );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block space-y-2">
+    <div className="relative block space-y-2">
       <span className="text-sm font-medium text-slate-700">{label}</span>
       {children}
-    </label>
+    </div>
   );
 }
 

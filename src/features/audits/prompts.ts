@@ -15,20 +15,24 @@ Analyze the provided business inputs and return ONLY valid JSON matching the sch
 Focus on outcomes: ${DAYCARE_CONTEXT.outcome}.
 Primary KPIs: ${DAYCARE_CONTEXT.kpis}.
 Compliance: ${DAYCARE_CONTEXT.compliance}
-Be specific to the city and local childcare market. Avoid generic marketing fluff.`;
+Be specific to the country, city, and local childcare market. Avoid generic marketing fluff.
+
+Competitor discovery: The user does NOT provide competitors. You must identify likely local daycare / preschool / early-learning competitors near the given city and country using your knowledge of that market. Name specific competitor centres where possible, and explain how each compares for local visibility, reviews, and enrolment marketing. If you are uncertain about exact names, say so and still give the strongest plausible local competitor set for that city.`;
 }
 
 export function buildAuditUserPrompt(input: AuditInput): string {
   return `Audit this daycare / childcare center:
 
 Business name: ${input.businessName}
+Country: ${input.country}
 City: ${input.city}
 Website: ${input.websiteUrl}
 Google Business Profile: ${input.gbpUrl || "Not provided"}
 Review count: ${input.reviewCount ?? "Unknown"}
 Average rating: ${input.averageRating ?? "Unknown"}
-Known competitors: ${input.competitors || "Not provided"}
 Additional notes: ${input.notes || "None"}
+
+Do not expect a competitor list from the user. Identify likely local competitors yourself for ${input.city}, ${input.country}.
 
 Return JSON with this exact shape:
 {
@@ -37,7 +41,7 @@ Return JSON with this exact shape:
   "issues": [{ "title": string, "severity": "high"|"medium"|"low", "description": string }] (exactly 5),
   "quickWins": [{ "title": string, "impact": string, "effort": "low"|"medium"|"high" }] (exactly 5),
   "plan": [{ "week": number, "focus": string, "actions": string[] }] (4 weeks),
-  "competitorInsights": string[] (2-4 bullets),
+  "competitorInsights": string[] (2-4 bullets; each should name a likely local competitor and a short comparison insight),
   "recommendedPackage": "local-visibility"|"lead-engine"|"growth-partner",
   "packageRationale": string
 }`;

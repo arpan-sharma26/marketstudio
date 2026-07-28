@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
@@ -22,7 +23,7 @@ type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
  */
 
 /** Returns the authenticated user's profile row, or null when unauthenticated. */
-export async function getAuthenticatedProfile(): Promise<ProfileRow | null> {
+export const getAuthenticatedProfile = cache(async (): Promise<ProfileRow | null> => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -36,7 +37,7 @@ export async function getAuthenticatedProfile(): Promise<ProfileRow | null> {
     .maybeSingle();
 
   return profile ?? null;
-}
+});
 
 /** Requires an authenticated, active profile. Redirects to sign-in otherwise. */
 export async function requireProfile(): Promise<ProfileRow> {
@@ -49,8 +50,9 @@ export async function requireProfile(): Promise<ProfileRow> {
 /**
  * Loads the full authorization context (memberships, location memberships, assigned
  * clients) for the authenticated user. Returns null when unauthenticated.
+ * Cached per request so layout + page + query helpers do not re-hit Auth/DB.
  */
-export async function loadAuthContext(): Promise<AuthContext | null> {
+export const loadAuthContext = cache(async (): Promise<AuthContext | null> => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -115,7 +117,7 @@ export async function loadAuthContext(): Promise<AuthContext | null> {
     ),
     assignedClientIds,
   };
-}
+});
 
 /** Requires an authorization context; redirects to sign-in when unauthenticated. */
 export async function requireAuthContext(): Promise<AuthContext> {

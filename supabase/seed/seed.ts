@@ -1,14 +1,12 @@
 /**
- * Local development seed data for Market Studio.
+ * Development seed data for Market Studio (cloud Supabase).
  *
- * Creates a small, safe dataset for local testing ONLY. Contains no real parent or client
- * information. Run against a LOCAL Supabase instance:
+ * Creates a small, safe dataset for testing ONLY. Contains no real parent data.
  *
  *   npm run db:seed
  *
  * Requires `.env.local` with NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.
- * The service-role client bypasses RLS and must only ever be used in trusted contexts
- * like this script. Never run this against production.
+ * Never run this against production with real customer data.
  */
 import { config as loadEnv } from "dotenv";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
@@ -26,8 +24,7 @@ if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
   );
 }
 
-// Development-only credentials. These are intentionally weak and must never be used
-// outside local development.
+// Development-only credentials. Intentionally weak — local/dev use only.
 const SEED_PASSWORD = "MarketStudio!Dev123";
 
 const USERS = {
@@ -37,23 +34,61 @@ const USERS = {
     platformRole: "market_studio_admin" as const,
   },
   clientAdmin: {
-    email: "owner@sunnydays.test",
+    email: "owner@bloomingsteps.test",
     fullName: "Alex Owner",
     platformRole: "client_user" as const,
   },
   locationManager: {
-    email: "manager@sunnydays.test",
+    email: "manager@bloomingsteps.test",
     fullName: "Riley Manager",
     platformRole: "client_user" as const,
   },
 };
+
+const LOCATIONS = [
+  {
+    name: "Blooming Steps — Calgary",
+    slug: "calgary",
+    address_line_1: "100 Main Street",
+    city: "Calgary",
+    province_code: "AB",
+    postal_code: "T2P 1A1",
+    timezone: "America/Edmonton",
+    status: "active" as const,
+    accepting_registrations: true,
+    tour_booking_enabled: true,
+  },
+  {
+    name: "Blooming Steps — Winnipeg",
+    slug: "winnipeg",
+    address_line_1: "200 Portage Avenue",
+    city: "Winnipeg",
+    province_code: "MB",
+    postal_code: "R3C 0A1",
+    timezone: "America/Winnipeg",
+    status: "active" as const,
+    accepting_registrations: true,
+    tour_booking_enabled: true,
+  },
+  {
+    name: "Blooming Steps — Regina",
+    slug: "regina",
+    address_line_1: "300 Scarth Street",
+    city: "Regina",
+    province_code: "SK",
+    postal_code: "S4P 2G9",
+    timezone: "America/Regina",
+    status: "coming_soon" as const,
+    accepting_registrations: false,
+    tour_booking_enabled: false,
+  },
+];
 
 async function ensureUser(
   supabase: SupabaseClient<Database>,
   email: string,
   fullName: string,
 ): Promise<string> {
-  // createUser is idempotent-ish: if the user exists we look them up instead.
   const { data, error } = await supabase.auth.admin.createUser({
     email,
     password: SEED_PASSWORD,
@@ -67,9 +102,10 @@ async function ensureUser(
     throw error;
   }
 
-  // Fall back to listing users to find the existing id.
-  const { data: list, error: listError } =
-    await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+  const { data: list, error: listError } = await supabase.auth.admin.listUsers({
+    page: 1,
+    perPage: 1000,
+  });
   if (listError) throw listError;
   const existing = list.users.find((u) => u.email === email);
   if (!existing) throw new Error(`Could not resolve seeded user: ${email}`);
@@ -109,66 +145,79 @@ async function main() {
     .eq("id", locationManagerId);
 
   console.log("Seeding client…");
-  const { data: client, error: clientError } = await supabase
+  const clientPayload = {
+    name: "Blooming Steps Daycare",
+    legal_name: "Blooming Steps Day Care",
+    slug: "blooming-steps",
+    website_url: "https://example.test/blooming-steps",
+    primary_email: "hello@bloomingsteps.test",
+    country_code: "CA",
+    timezone: "America/Edmonton", // Calgary
+    status: "active" as const,
+    assigned_account_manager_id: adminId,
+    onboarding_status: "completed" as const,
+  };
+
+  // Rename legacy Sunny Days seed row in place when present.
+  const { data: legacyClient } = await supabase
     .from("clients")
-    .upsert(
-      {
-        name: "Sunny Days Daycare",
-        legal_name: "Sunny Days Early Learning Inc.",
-        slug: "sunny-days",
-        website_url: "https://example.test/sunny-days",
-        primary_email: "hello@sunnydays.test",
-        country_code: "CA",
-        timezone: "America/Edmonton",
-        status: "active",
-        assigned_account_manager_id: adminId,
-        onboarding_status: "completed",
-      },
-      { onConflict: "slug" },
-    )
     .select("id")
-    .single();
-  if (clientError) throw clientError;
-  const clientId = client.id;
+    .eq("slug", "sunny-days")
+    .maybeSingle();
+
+  let clientId: string;
+  if (legacyClient) {
+    const { data: renamed, error: renameError } = await supabase
+      .from("clients")
+      .update(clientPayload)
+      .eq("id", legacyClient.id)
+      .select("id")
+      .single();
+    if (renameError) throw renameError;
+    clientId = renamed.id;
+  } else {
+    const { data: client, error: clientError } = await supabase
+      .from("clients")
+      .upsert(clientPayload, { onConflict: "slug" })
+      .select("id")
+      .single();
+    if (clientError) throw clientError;
+    clientId = client.id;
+  }
 
   console.log("Seeding locations…");
+  const keepSlugs = LOCATIONS.map((l) => l.slug);
+
+  // Remove old seed locations that are no longer part of this dataset (e.g. downtown/northside).
+  const { data: existingLocations } = await supabase
+    .from("client_locations")
+    .select("id, slug")
+    .eq("client_id", clientId);
+
+  const obsoleteIds = (existingLocations ?? [])
+    .filter((row) => !keepSlugs.includes(row.slug))
+    .map((row) => row.id);
+
+  if (obsoleteIds.length > 0) {
+    await supabase.from("location_memberships").delete().in("location_id", obsoleteIds);
+    await supabase.from("location_business_hours").delete().in("location_id", obsoleteIds);
+    await supabase.from("client_locations").delete().in("id", obsoleteIds);
+  }
+
   const { data: locations, error: locationError } = await supabase
     .from("client_locations")
     .upsert(
-      [
-        {
-          client_id: clientId,
-          name: "Sunny Days — Downtown",
-          slug: "downtown",
-          address_line_1: "100 Main Street",
-          city: "Calgary",
-          province_code: "AB",
-          postal_code: "T2P 1A1",
-          timezone: "America/Edmonton",
-          status: "active",
-          accepting_registrations: true,
-          tour_booking_enabled: true,
-        },
-        {
-          client_id: clientId,
-          name: "Sunny Days — Northside",
-          slug: "northside",
-          address_line_1: "250 North Avenue",
-          city: "Calgary",
-          province_code: "AB",
-          postal_code: "T3K 2B2",
-          timezone: "America/Edmonton",
-          status: "coming_soon",
-          accepting_registrations: false,
-          tour_booking_enabled: false,
-        },
-      ],
+      LOCATIONS.map((location) => ({
+        client_id: clientId,
+        ...location,
+      })),
       { onConflict: "client_id,slug" },
     )
     .select("id, slug");
   if (locationError) throw locationError;
-  const downtown = locations.find((l) => l.slug === "downtown");
-  if (!downtown) throw new Error("Downtown location was not seeded");
+
+  const calgary = locations.find((l) => l.slug === "calgary");
+  if (!calgary) throw new Error("Calgary location was not seeded");
 
   console.log("Seeding memberships…");
   await supabase.from("client_memberships").upsert(
@@ -184,12 +233,12 @@ async function main() {
     { onConflict: "client_id,profile_id" },
   );
 
-  // Restrict the location manager to the Downtown location only.
+  // Restrict the location manager to the Calgary location only.
   await supabase.from("location_memberships").upsert(
     [
       {
         client_id: clientId,
-        location_id: downtown.id,
+        location_id: calgary.id,
         profile_id: locationManagerId,
         role: "location_manager",
       },
@@ -197,12 +246,140 @@ async function main() {
     { onConflict: "location_id,profile_id" },
   );
 
+  console.log("Seeding brand profile…");
+  await supabase.from("brand_profiles").upsert(
+    {
+      client_id: clientId,
+      name: "Blooming Steps",
+      business_summary:
+        "Blooming Steps Daycare helps Canadian families find warm, licensed early learning near home.",
+      mission_statement:
+        "Nurture curious children through play-based learning and trusted caregiver partnerships.",
+      brand_voice: "Warm, clear, reassuring, never pushy.",
+      primary_colour: "#0A2F3D",
+      secondary_colour: "#1FA6A0",
+      accent_colour: "#7ED6C1",
+      target_audience: [
+        "Parents of infants to school-age children in Calgary, Winnipeg, and Regina",
+        "Families comparing licensed daycare options",
+      ],
+      unique_selling_points: [
+        "Licensed early learning environments",
+        "Play-based curriculum",
+        "Transparent tour and enrolment process",
+      ],
+      content_pillars: [
+        "Daily learning moments",
+        "Parent partnership",
+        "Community and safety",
+      ],
+      approved_claims: [
+        "Licensed daycare",
+        "Play-based early learning",
+        "Tour bookings available at select locations",
+      ],
+      restricted_claims: [
+        "Guaranteed space availability",
+        "Subsidy eligibility guarantees",
+        "Medical or developmental claims",
+      ],
+      approved_ctas: ["Book a tour", "Ask about enrolment", "Contact our team"],
+      status: "approved",
+      approved_by: clientAdminId,
+      approved_at: new Date().toISOString(),
+    },
+    { onConflict: "client_id" },
+  );
+
+  console.log("Seeding FAQs…");
+  // Replace seed FAQs for this client so re-runs stay idempotent.
+  await supabase.from("client_faqs").delete().eq("client_id", clientId);
+  await supabase.from("client_faqs").insert([
+    {
+      client_id: clientId,
+      location_id: null,
+      question: "Do you offer tours?",
+      answer:
+        "Yes. Families can book a tour at locations where tour booking is enabled. Availability varies by location.",
+      category: "Tours",
+      is_ai_usable: true,
+      status: "approved",
+      approved_by: clientAdminId,
+      approved_at: new Date().toISOString(),
+    },
+    {
+      client_id: clientId,
+      location_id: calgary.id,
+      question: "Is the Calgary location accepting registrations?",
+      answer:
+        "The Calgary location is currently accepting registrations. Contact the centre to confirm age-group availability.",
+      category: "Enrolment",
+      is_ai_usable: true,
+      status: "approved",
+      approved_by: clientAdminId,
+      approved_at: new Date().toISOString(),
+    },
+  ]);
+
+  console.log("Seeding programs…");
+  const programDefs = [
+    {
+      name: "Infant",
+      description: "Nurturing care for our youngest learners.",
+      minimum_age_months: 0,
+      maximum_age_months: 18,
+      status: "active" as const,
+    },
+    {
+      name: "Toddler",
+      description: "Play-based discovery for emerging walkers and talkers.",
+      minimum_age_months: 18,
+      maximum_age_months: 36,
+      status: "active" as const,
+    },
+    {
+      name: "Preschool",
+      description: "School-readiness through guided play and social learning.",
+      minimum_age_months: 36,
+      maximum_age_months: 60,
+      status: "active" as const,
+    },
+  ];
+
+  const { data: programs, error: programError } = await supabase
+    .from("programs")
+    .upsert(
+      programDefs.map((program) => ({ client_id: clientId, ...program })),
+      { onConflict: "client_id,name" },
+    )
+    .select("id, name");
+  if (programError) throw programError;
+
+  const activeLocations = (locations ?? []).filter((l) =>
+    ["calgary", "winnipeg"].includes(l.slug),
+  );
+  const locationProgramRows = programs.flatMap((program) =>
+    activeLocations.map((location) => ({
+      client_id: clientId,
+      location_id: location.id,
+      program_id: program.id,
+      is_available: true,
+      accepting_registrations: location.slug === "calgary",
+    })),
+  );
+
+  if (locationProgramRows.length > 0) {
+    await supabase
+      .from("location_programs")
+      .upsert(locationProgramRows, { onConflict: "location_id,program_id" });
+  }
+
   console.log("\nSeed complete. Development sign-in credentials:");
   console.table([
     { role: "Market Studio admin", email: USERS.admin.email, password: SEED_PASSWORD },
     { role: "Client admin", email: USERS.clientAdmin.email, password: SEED_PASSWORD },
     {
-      role: "Location manager (Downtown only)",
+      role: "Location manager (Calgary only)",
       email: USERS.locationManager.email,
       password: SEED_PASSWORD,
     },

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -9,8 +10,9 @@ import type { Database } from "@/types/database";
  * Server Supabase client bound to the request's cookies. Runs with the authenticated
  * user's identity, so Row Level Security applies. Use this in Server Components, Server
  * Actions, and Route Handlers for all normal (RLS-enforced) data access.
+ * Cached per request so repeated callers share one client instance.
  */
-export async function createClient(): Promise<SupabaseClient<Database>> {
+export const createClient = cache(async (): Promise<SupabaseClient<Database>> => {
   const cookieStore = await cookies();
 
   // `@supabase/ssr` resolves the Schema generic to `any`, which strips query result
@@ -42,4 +44,4 @@ export async function createClient(): Promise<SupabaseClient<Database>> {
       },
     },
   );
-}
+});

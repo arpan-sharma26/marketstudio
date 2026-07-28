@@ -24,7 +24,11 @@ export async function saveAudit(
       gbp_url: input.gbpUrl || null,
       review_count: input.reviewCount ?? null,
       average_rating: input.averageRating ?? null,
-      competitors: input.competitors || null,
+      // Competitors are AI-discovered; persist named insights from the result when available.
+      competitors:
+        result.competitorInsights.length > 0
+          ? result.competitorInsights.join(" | ")
+          : null,
       notes: input.notes || null,
       visibility_score: result.visibilityScore,
       result: result as unknown as Json,

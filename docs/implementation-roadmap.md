@@ -157,11 +157,14 @@ business hours.
 
 ---
 
-## Phase 3 — Brand profiles, FAQs & programs
+## Phase 3 — Brand profiles, FAQs & programs (DONE)
 
 **Scope:** brand profile builder, approved/restricted claims, client FAQs, programs and
 location-program availability. **Database:** `brand_profiles`, `client_faqs`, `programs`,
 `location_programs`. **Permissions:** `brand.manage`, `brand.approve`.
+
+**Shipped:** client Brand / FAQs / Programs pages; one brand profile per client; FAQ
+approval + AI-usable flag; programs with location links; RLS via client managers.
 
 ## Phase 4 — Client onboarding
 
