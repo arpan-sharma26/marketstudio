@@ -5,6 +5,7 @@ import type { Config } from "tailwindcss";
  * mint → teal → deep navy pixel wave, charcoal wordmark, soft off-white ground.
  */
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/app/**/*.{ts,tsx}",
     "./src/components/**/*.{ts,tsx}",
@@ -27,14 +28,14 @@ const config: Config = {
           950: "#071824",
         },
         ink: {
-          DEFAULT: "#2a3140",
-          muted: "#5b6472",
-          soft: "#8b93a1",
+          DEFAULT: "var(--ms-ink)",
+          muted: "var(--ms-ink-muted)",
+          soft: "var(--ms-ink-soft)",
         },
         paper: {
-          DEFAULT: "#f6f8f9",
-          elevated: "#ffffff",
-          warm: "#f3f6f7",
+          DEFAULT: "var(--ms-paper)",
+          elevated: "var(--ms-paper-elevated)",
+          warm: "var(--ms-paper-warm)",
         },
       },
       fontFamily: {
@@ -48,8 +49,7 @@ const config: Config = {
       backgroundImage: {
         "brand-wave":
           "linear-gradient(135deg, #96e5d3 0%, #2fc4ae 42%, #0a2f3d 100%)",
-        "brand-mist":
-          "radial-gradient(1200px 600px at 10% -10%, rgba(150, 229, 211, 0.45), transparent 55%), radial-gradient(900px 500px at 90% 10%, rgba(47, 196, 174, 0.18), transparent 50%), linear-gradient(180deg, #f6f8f9 0%, #eef5f4 100%)",
+        "brand-mist": "var(--ms-brand-mist)",
       },
     },
   },

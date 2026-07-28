@@ -44,6 +44,7 @@ export const PERMISSIONS = [
   "membership.manage",
   "brand.manage",
   "brand.approve",
+  "onboarding.manage",
   "lead.read",
   "lead.update",
   "lead.assign",

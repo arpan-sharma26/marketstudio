@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { AppNav } from "@/components/shared/app-nav";
 import { BrandLogo } from "@/components/shared/brand-logo";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { SignOutButton } from "@/features/auth/components/sign-out-button";
 
 interface NavItem {
@@ -40,6 +41,7 @@ export function AppShell({ userName, userEmail, children }: AppShellProps) {
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-3">
+            <ThemeToggle />
             <div className="hidden text-right sm:block">
               <p className="truncate text-sm font-semibold text-ink">{userName}</p>
               <p className="truncate text-xs text-ink-muted">{userEmail}</p>

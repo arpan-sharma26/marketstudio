@@ -11,11 +11,11 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 const variantClasses: Record<ButtonVariant, string> = {
   // Explicit hex keeps navy visible even if a Tailwind token fails to generate.
   primary:
-    "bg-[#0a2f3d] text-white hover:bg-[#0a4f4c] focus-visible:ring-[#2fc4ae] shadow-sm",
+    "bg-[#0a2f3d] text-white hover:bg-[#0a4f4c] focus-visible:ring-[#2fc4ae] shadow-sm dark:bg-brand-400 dark:text-brand-950 dark:hover:bg-brand-300",
   secondary:
-    "bg-white text-ink border border-slate-300 hover:bg-[#e8faf5] focus-visible:ring-[#2fc4ae]",
+    "bg-white text-ink border border-slate-300 hover:bg-[#e8faf5] focus-visible:ring-[#2fc4ae] dark:bg-paper-elevated dark:border-slate-600 dark:hover:bg-brand-950",
   ghost:
-    "bg-transparent text-ink-muted hover:bg-[#e8faf5] hover:text-[#0a2f3d] focus-visible:ring-[#2fc4ae]",
+    "bg-transparent text-ink-muted hover:bg-[#e8faf5] hover:text-[#0a2f3d] focus-visible:ring-[#2fc4ae] dark:hover:bg-brand-950 dark:hover:text-brand-200",
   danger: "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600",
 };
 

@@ -9,7 +9,14 @@ import { cn } from "@/lib/utils";
 interface ClientSubnavProps {
   clientId: string;
   /** @deprecated Derived from the URL; kept optional for call-site compatibility. */
-  active?: "overview" | "locations" | "members" | "brand" | "faqs" | "programs";
+  active?:
+    | "overview"
+    | "locations"
+    | "onboarding"
+    | "members"
+    | "brand"
+    | "faqs"
+    | "programs";
 }
 
 const LINKS = [
@@ -18,6 +25,11 @@ const LINKS = [
     key: "locations",
     label: "Locations",
     href: (id: string) => `/clients/${id}/locations`,
+  },
+  {
+    key: "onboarding",
+    label: "Onboarding",
+    href: (id: string) => `/clients/${id}/onboarding`,
   },
   {
     key: "brand",
@@ -47,6 +59,7 @@ function resolveActive(
 ): (typeof LINKS)[number]["key"] {
   const base = `/clients/${clientId}`;
   if (pathname.startsWith(`${base}/locations`)) return "locations";
+  if (pathname.startsWith(`${base}/onboarding`)) return "onboarding";
   if (pathname.startsWith(`${base}/brand`)) return "brand";
   if (pathname.startsWith(`${base}/faqs`)) return "faqs";
   if (pathname.startsWith(`${base}/programs`)) return "programs";
@@ -70,7 +83,7 @@ export function ClientSubnav({ clientId }: ClientSubnavProps) {
             className={cn(
               "inline-flex items-center border-b-2 px-3 py-2 text-sm font-medium transition-colors",
               isActive
-                ? "border-brand-600 text-brand-800"
+                ? "border-brand-600 text-brand-800 dark:border-brand-400 dark:text-brand-200"
                 : "border-transparent text-ink-muted hover:text-ink",
             )}
             aria-current={isActive ? "page" : undefined}

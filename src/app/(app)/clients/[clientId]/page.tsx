@@ -44,6 +44,19 @@ export default async function ClientDetailPage({
       <PageHeader
         title={client.name}
         description={`${client.slug} · ${client.status}`}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium capitalize text-brand-800 ring-1 ring-brand-100">
+              Onboarding: {client.onboarding_status.replaceAll("_", " ")}
+            </span>
+            <PendingNavLink
+              href={`/clients/${clientId}/onboarding`}
+              className="text-sm font-medium text-brand-700 hover:underline"
+            >
+              View checklist
+            </PendingNavLink>
+          </div>
+        }
       />
       <ClientSubnav clientId={clientId} active="overview" />
 

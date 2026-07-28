@@ -9,6 +9,7 @@ import { isPlatformAdmin } from "@/lib/permissions";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
 import { toFieldErrors } from "@/lib/validation";
+import { ensureOnboardingTasks } from "@/features/onboarding/queries";
 import {
   createClientSchema,
   resolveClientSlug,
@@ -74,6 +75,12 @@ export async function createClientAction(
     }
     console.error("createClientAction failed", error.message);
     return actionError("Could not create the client. Please try again.");
+  }
+
+  try {
+    await ensureOnboardingTasks(data.id);
+  } catch (ensureError) {
+    console.error("ensureOnboardingTasks after create failed", ensureError);
   }
 
   revalidatePath("/clients");

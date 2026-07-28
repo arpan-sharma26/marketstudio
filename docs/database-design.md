@@ -81,6 +81,7 @@ Fields:
 •	subscription_plan text nullable
 •	onboarding_status text
 •	onboarding_completed_at timestamptz nullable
+•	marketing_goals text nullable
 •	created_at timestamptz
 •	updated_at timestamptz
 Suggested statuses:
@@ -90,6 +91,46 @@ Suggested statuses:
 •	paused
 •	cancelled
 •	archived
+Suggested onboarding_status values:
+•	not_started
+•	in_progress
+•	completed
+•	blocked
+________________________________________
+Table: onboarding_tasks
+Purpose:
+Tracks the per-client onboarding checklist (structured intake; no AI in Phase 4).
+Fields:
+•	id uuid primary key
+•	client_id uuid foreign key
+•	task_key text
+•	title text
+•	description text nullable
+•	sort_order integer
+•	is_required boolean default true
+•	status text
+•	notes text nullable
+•	completed_at timestamptz nullable
+•	completed_by uuid nullable (profiles)
+•	created_at timestamptz
+•	updated_at timestamptz
+Suggested task statuses:
+•	pending
+•	in_progress
+•	completed
+•	skipped
+Add a unique constraint on:
+•	client_id
+•	task_key
+Default task_key values:
+•	client_profile
+•	locations
+•	business_hours
+•	brand_profile
+•	faqs
+•	programs
+•	members
+•	marketing_goals
 ________________________________________
 Table: client_memberships
 Purpose:
@@ -849,7 +890,10 @@ Notes on the implementation:
 •	Role and status values are enforced with CHECK constraints matching the union types in
 	src/types/roles.ts.
 •	Column defaults added during implementation: clients.timezone defaults to
-	'America/Edmonton', clients.onboarding_status defaults to 'not_started',
+	'America/Edmonton', clients.onboarding_status defaults to 'not_started'
+	with CHECK values not_started|in_progress|completed|blocked,
+	clients.marketing_goals is nullable intake text,
+	onboarding_tasks unique on (client_id, task_key),
 	client_locations.timezone defaults to 'America/Edmonton'.
 
 Remaining tables from this document are implemented in later phases (see

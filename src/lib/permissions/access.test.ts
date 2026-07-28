@@ -143,6 +143,7 @@ describe("named permissions by role", () => {
     expect(can(clientAdminCtx, "content.approve", { clientId: CLIENT_A })).toBe(true);
     expect(can(clientAdminCtx, "brand.manage", { clientId: CLIENT_A })).toBe(true);
     expect(can(clientAdminCtx, "brand.approve", { clientId: CLIENT_A })).toBe(true);
+    expect(can(clientAdminCtx, "onboarding.manage", { clientId: CLIENT_A })).toBe(true);
     expect(can(clientAdminCtx, "membership.manage", { clientId: CLIENT_A })).toBe(true);
   });
 
@@ -150,12 +151,14 @@ describe("named permissions by role", () => {
     expect(can(viewerCtx, "lead.read", { clientId: CLIENT_A })).toBe(true);
     expect(can(viewerCtx, "lead.update", { clientId: CLIENT_A })).toBe(false);
     expect(can(viewerCtx, "brand.manage", { clientId: CLIENT_A })).toBe(false);
+    expect(can(viewerCtx, "onboarding.manage", { clientId: CLIENT_A })).toBe(false);
     expect(can(viewerCtx, "content.approve", { clientId: CLIENT_A })).toBe(false);
   });
 
   it("prevents location managers from approving content", () => {
     expect(can(locationManagerCtx, "content.approve", { clientId: CLIENT_A })).toBe(false);
     expect(can(locationManagerCtx, "brand.approve", { clientId: CLIENT_A })).toBe(false);
+    expect(can(locationManagerCtx, "onboarding.manage", { clientId: CLIENT_A })).toBe(false);
     expect(can(locationManagerCtx, "lead.update", { clientId: CLIENT_A })).toBe(true);
   });
 });

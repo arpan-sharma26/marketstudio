@@ -363,6 +363,7 @@ export type Database = {
           created_at: string
           id: string
           legal_name: string | null
+          marketing_goals: string | null
           name: string
           onboarding_completed_at: string | null
           onboarding_status: string
@@ -381,6 +382,7 @@ export type Database = {
           created_at?: string
           id?: string
           legal_name?: string | null
+          marketing_goals?: string | null
           name: string
           onboarding_completed_at?: string | null
           onboarding_status?: string
@@ -399,6 +401,7 @@ export type Database = {
           created_at?: string
           id?: string
           legal_name?: string | null
+          marketing_goals?: string | null
           name?: string
           onboarding_completed_at?: string | null
           onboarding_status?: string
@@ -581,6 +584,69 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_tasks: {
+        Row: {
+          client_id: string
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_required: boolean
+          notes: string | null
+          sort_order: number
+          status: string
+          task_key: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_required?: boolean
+          notes?: string | null
+          sort_order?: number
+          status?: string
+          task_key: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_required?: boolean
+          notes?: string | null
+          sort_order?: number
+          status?: string
+          task_key?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_tasks_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "onboarding_tasks_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

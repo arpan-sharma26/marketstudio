@@ -31,8 +31,8 @@ export function AppNav({ items }: AppNavProps) {
             className={cn(
               "flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
               active
-                ? "bg-brand-50 text-brand-800 shadow-sm ring-1 ring-brand-100"
-                : "text-ink-muted hover:bg-brand-50/70 hover:text-brand-900",
+                ? "bg-brand-50 text-brand-800 shadow-sm ring-1 ring-brand-100 dark:bg-brand-950 dark:text-brand-200 dark:ring-brand-800"
+                : "text-ink-muted hover:bg-brand-50/70 hover:text-brand-900 dark:hover:bg-brand-950/80 dark:hover:text-brand-100",
             )}
           >
             <span className="flex-1">{item.label}</span>

@@ -166,10 +166,15 @@ location-program availability. **Database:** `brand_profiles`, `client_faqs`, `p
 **Shipped:** client Brand / FAQs / Programs pages; one brand profile per client; FAQ
 approval + AI-usable flag; programs with location links; RLS via client managers.
 
-## Phase 4 — Client onboarding
+## Phase 4 — Client onboarding (DONE)
 
 **Scope:** onboarding checklist + structured intake (no AI yet). **Database:** onboarding
-status fields already on `clients`; onboarding tasks table. **Permissions:** `onboarding.manage`.
+status fields on `clients` (+ `marketing_goals`); `onboarding_tasks` table.
+**Permissions:** `onboarding.manage`.
+
+**Shipped:** client Onboarding tab with progress checklist, deep links to existing
+sections, marketing goals form, complete/reopen onboarding; tasks ensured on client
+create and page load.
 
 ## Phase 5 — Lead capture & pipeline
 

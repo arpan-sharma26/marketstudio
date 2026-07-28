@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import type { CSSProperties } from "react";
 
 import { AnimatedSignInLogo } from "@/components/shared/animated-sign-in-logo";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { BRAND } from "@/config/brand";
 import { SignInForm } from "@/features/auth/components/sign-in-form";
 import { getAuthenticatedProfile } from "@/lib/auth";
@@ -33,6 +34,9 @@ export default async function SignInPage() {
       </div>
 
       <div className="sign-in-page__content relative z-10 w-full max-w-md">
+        <div className="mb-4 flex justify-end">
+          <ThemeToggle />
+        </div>
         <div className="sign-in-page__hero mb-9 flex flex-col items-center text-center">
           <AnimatedSignInLogo />
           <p className="sign-in-page__tagline mt-5 max-w-sm text-sm font-medium tracking-wide text-ink-muted">

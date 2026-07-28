@@ -24,8 +24,31 @@
   --ms-teal: #2fc4ae;
   --ms-navy: #0a2f3d;
   --ms-ink: #2a3140;
+  --ms-ink-muted: #5b6472;
+  --ms-ink-soft: #8b93a1;
   --ms-paper: #f6f8f9;
   --ms-paper-elevated: #ffffff;
+  --ms-paper-warm: #f3f6f7;
+  --ms-border: rgb(226 232 240 / 0.8);
+  --ms-brand-mist:
+    radial-gradient(1200px 600px at 10% -10%, rgba(150, 229, 211, 0.45), transparent 55%),
+    radial-gradient(900px 500px at 90% 10%, rgba(47, 196, 174, 0.18), transparent 50%),
+    linear-gradient(180deg, #f6f8f9 0%, #eef5f4 100%);
+}
+
+.dark {
+  color-scheme: dark;
+  --ms-ink: #e8eef2;
+  --ms-ink-muted: #a8b3bf;
+  --ms-ink-soft: #7d8896;
+  --ms-paper: #0b1419;
+  --ms-paper-elevated: #121c22;
+  --ms-paper-warm: #0f181e;
+  --ms-border: rgb(51 65 85 / 0.85);
+  --ms-brand-mist:
+    radial-gradient(1000px 520px at 8% -10%, rgba(47, 196, 174, 0.18), transparent 55%),
+    radial-gradient(800px 480px at 92% 8%, rgba(10, 79, 76, 0.35), transparent 52%),
+    linear-gradient(180deg, #0b1419 0%, #0f1a20 100%);
 }
 
 body {
@@ -35,12 +58,57 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Bridge common light-only utility classes used across pages */
+.dark .bg-white {
+  background-color: var(--ms-paper-elevated);
+}
+.dark .bg-slate-50,
+.dark .bg-slate-50\/80,
+.dark .hover\:bg-slate-50\/80:hover {
+  background-color: rgb(30 41 51 / 0.9);
+}
+.dark .bg-slate-100 {
+  background-color: rgb(30 41 51);
+}
+.dark .bg-slate-200 {
+  background-color: rgb(51 65 85);
+}
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: var(--ms-ink);
+}
+.dark .text-slate-600,
+.dark .text-slate-500 {
+  color: var(--ms-ink-muted);
+}
+.dark .border-slate-200,
+.dark .border-slate-200\/80,
+.dark .border-slate-300,
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--ms-border);
+}
+.dark .ring-brand-100 {
+  --tw-ring-color: rgb(15 138 124 / 0.35);
+}
+.dark .shadow-soft {
+  --tw-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.55);
+  --tw-shadow-colored: 0 10px 30px -18px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+    var(--tw-shadow);
+}
+
 @layer components {
   .card {
     border-radius: 1rem;
-    border: 1px solid rgb(226 232 240 / 0.8);
+    border: 1px solid var(--ms-border);
     background-color: var(--ms-paper-elevated);
     box-shadow: 0 10px 30px -18px rgba(10, 47, 61, 0.18);
+  }
+
+  .dark .card {
+    box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.55);
   }
 
   /** Subtle pixel-grid atmosphere inspired by the logo ribbon. */
@@ -49,6 +117,12 @@ body {
       linear-gradient(to right, rgba(10, 47, 61, 0.035) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(10, 47, 61, 0.035) 1px, transparent 1px);
     background-size: 18px 18px;
+  }
+
+  .dark .brand-pixel-grid {
+    background-image:
+      linear-gradient(to right, rgba(150, 229, 211, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(150, 229, 211, 0.06) 1px, transparent 1px);
   }
 
   .brand-gradient-bar {
@@ -426,6 +500,48 @@ body {
   height: 60%;
   background: radial-gradient(ellipse at center, rgba(47, 196, 174, 0.18), transparent 70%);
   pointer-events: none;
+}
+
+.dark .sign-in-page {
+  background: #0b1419;
+}
+
+.dark .sign-in-page__base {
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(47, 196, 174, 0.16), transparent 58%),
+    radial-gradient(700px 480px at 92% 8%, rgba(10, 79, 76, 0.35), transparent 52%),
+    radial-gradient(800px 500px at 50% 110%, rgba(0, 0, 0, 0.45), transparent 55%),
+    linear-gradient(180deg, #0b1419 0%, #0f1a20 48%, #121c22 100%);
+}
+
+.dark .sign-in-page__grid {
+  background-image:
+    linear-gradient(to right, rgba(150, 229, 211, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(150, 229, 211, 0.06) 1px, transparent 1px);
+}
+
+.dark .sign-in-page__panel {
+  border-color: rgba(47, 196, 174, 0.28);
+  background: rgba(18, 28, 34, 0.88);
+  box-shadow:
+    0 24px 60px -28px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(150, 229, 211, 0.08);
+}
+
+.dark .bg-brand-50,
+.dark .bg-brand-50\/50,
+.dark .bg-brand-50\/60,
+.dark .bg-brand-50\/70 {
+  background-color: rgb(7 24 36 / 0.85);
+}
+
+.dark .text-brand-800,
+.dark .text-brand-700 {
+  color: #96e5d3;
+}
+
+.dark .text-red-600 {
+  color: #f87171;
 }
 
 .sign-in-page__panel-header {

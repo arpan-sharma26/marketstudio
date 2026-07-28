@@ -55,6 +55,7 @@ export async function getClientCapabilities(clientId: string) {
     canManageMemberships: can(ctx, "membership.manage", { clientId }),
     canManageBrand: can(ctx, "brand.manage", { clientId }),
     canApproveBrand: can(ctx, "brand.approve", { clientId }),
+    canManageOnboarding: can(ctx, "onboarding.manage", { clientId }),
     canCreateClient: isPlatformAdmin(ctx),
   };
 }

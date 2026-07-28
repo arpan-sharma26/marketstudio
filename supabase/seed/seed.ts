@@ -156,6 +156,9 @@ async function main() {
     status: "active" as const,
     assigned_account_manager_id: adminId,
     onboarding_status: "completed" as const,
+    onboarding_completed_at: new Date().toISOString(),
+    marketing_goals:
+      "Fill infant and toddler rooms in Calgary; grow tour bookings in Winnipeg; prepare Regina launch awareness.",
   };
 
   // Rename legacy Sunny Days seed row in place when present.
@@ -373,6 +376,74 @@ async function main() {
       .from("location_programs")
       .upsert(locationProgramRows, { onConflict: "location_id,program_id" });
   }
+
+  console.log("Seeding onboarding tasks…");
+  const onboardingTaskDefs = [
+    {
+      task_key: "client_profile",
+      title: "Client profile",
+      description: "Confirm legal name, primary contact, website, and timezone.",
+      sort_order: 10,
+    },
+    {
+      task_key: "locations",
+      title: "Locations",
+      description: "Add at least one daycare location with address details.",
+      sort_order: 20,
+    },
+    {
+      task_key: "business_hours",
+      title: "Business hours",
+      description: "Set weekly operating hours for each location.",
+      sort_order: 30,
+    },
+    {
+      task_key: "brand_profile",
+      title: "Brand profile",
+      description: "Draft and approve voice, claims, colours, and CTAs.",
+      sort_order: 40,
+    },
+    {
+      task_key: "faqs",
+      title: "FAQs",
+      description: "Capture key parent questions and approved answers.",
+      sort_order: 50,
+    },
+    {
+      task_key: "programs",
+      title: "Programs",
+      description: "Add programs and link them to locations.",
+      sort_order: 60,
+    },
+    {
+      task_key: "members",
+      title: "Team members",
+      description: "Invite a client admin and any location managers.",
+      sort_order: 70,
+    },
+    {
+      task_key: "marketing_goals",
+      title: "Marketing goals",
+      description: "Record near-term marketing goals and notes for this client.",
+      sort_order: 80,
+    },
+  ] as const;
+
+  const completedAt = new Date().toISOString();
+  await supabase.from("onboarding_tasks").upsert(
+    onboardingTaskDefs.map((task) => ({
+      client_id: clientId,
+      task_key: task.task_key,
+      title: task.title,
+      description: task.description,
+      sort_order: task.sort_order,
+      is_required: true,
+      status: "completed" as const,
+      completed_at: completedAt,
+      completed_by: clientAdminId,
+    })),
+    { onConflict: "client_id,task_key" },
+  );
 
   console.log("\nSeed complete. Development sign-in credentials:");
   console.table([
