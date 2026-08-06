@@ -176,11 +176,14 @@ status fields on `clients` (+ `marketing_goals`); `onboarding_tasks` table.
 sections, marketing goals form, complete/reopen onboarding; tasks ensured on client
 create and page load.
 
-## Phase 5 — Lead capture & pipeline
+## Phase 5 — Lead capture & pipeline (DONE)
 
 **Scope:** manual lead entry, pipeline board, activities, notes, consent, duplicate
 detection. **Database:** `leads`, `lead_source_events`, `lead_activities`, `lead_notes`,
 `lead_consents`. **Permissions:** `lead.read/update/assign`.
+
+**Shipped:** client Leads tab with filters, pipeline board, create/detail forms, notes,
+consent history, activity timeline, and normalized email/phone duplicate checks.
 
 ## Phase 6 — Communications & tours
 
@@ -196,8 +199,10 @@ detection. **Database:** `leads`, `lead_source_events`, `lead_activities`, `lead
 
 ## Phase 8 — Campaigns & reporting
 
-**Scope:** campaigns, daily metrics, conversions, funnel reports. **Database:** `campaigns`,
+**Scope:** campaigns across Meta Ads (Facebook/Instagram), Google Ads, and organic/email/SMS
+channels; daily metrics, conversions, funnel reports. **Database:** `campaigns`,
 `campaign_metrics`, `conversions`. **Permissions:** `campaign.manage`, `report.read`.
+Large budget changes require human approval.
 
 ## Phase 9 — Reviews, AI & automation logs
 
@@ -205,6 +210,17 @@ detection. **Database:** `leads`, `lead_source_events`, `lead_activities`, `lead
 integrations config. **Database:** `reviews`, `review_responses`, `ai_generations`,
 `ai_recommendations`, `automation_runs`, `audit_logs`, `integrations`. **Permissions:**
 approval matrix from workflows doc; human-in-the-loop for sensitive actions.
+
+## Phase 10 — Local SEO & GEO (planned after core funnel)
+
+**Scope (post-MVP; do not start before Phases 5–8 are stable):**
+
+- Local SEO for daycare locations (Google Business Profile optimization, local listings,
+  citation consistency, local keyword/content recommendations).
+- GEO (generative / AI-search visibility): monitor and improve how the client appears in
+  AI answers and AI overviews; structured FAQs/claims aligned with approved brand data.
+- Tie SEO/GEO recommendations to locations, brand profiles, and lead outcomes.
+- Human approval for public listing changes and licensing/availability claims.
 
 ---
 

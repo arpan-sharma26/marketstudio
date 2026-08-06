@@ -13,6 +13,7 @@ interface ClientSubnavProps {
     | "overview"
     | "locations"
     | "onboarding"
+    | "leads"
     | "members"
     | "brand"
     | "faqs"
@@ -30,6 +31,11 @@ const LINKS = [
     key: "onboarding",
     label: "Onboarding",
     href: (id: string) => `/clients/${id}/onboarding`,
+  },
+  {
+    key: "leads",
+    label: "Leads",
+    href: (id: string) => `/clients/${id}/leads`,
   },
   {
     key: "brand",
@@ -60,6 +66,7 @@ function resolveActive(
   const base = `/clients/${clientId}`;
   if (pathname.startsWith(`${base}/locations`)) return "locations";
   if (pathname.startsWith(`${base}/onboarding`)) return "onboarding";
+  if (pathname.startsWith(`${base}/leads`)) return "leads";
   if (pathname.startsWith(`${base}/brand`)) return "brand";
   if (pathname.startsWith(`${base}/faqs`)) return "faqs";
   if (pathname.startsWith(`${base}/programs`)) return "programs";

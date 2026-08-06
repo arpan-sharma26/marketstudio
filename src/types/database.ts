@@ -424,6 +424,346 @@ export type Database = {
           },
         ]
       }
+      lead_activities: {
+        Row: {
+          activity_type: string
+          client_id: string
+          created_at: string
+          description: string | null
+          id: string
+          lead_id: string
+          metadata: Json
+          performed_by: string | null
+          title: string | null
+        }
+        Insert: {
+          activity_type: string
+          client_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          lead_id: string
+          metadata?: Json
+          performed_by?: string | null
+          title?: string | null
+        }
+        Update: {
+          activity_type?: string
+          client_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          lead_id?: string
+          metadata?: Json
+          performed_by?: string | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_activities_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activities_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_consents: {
+        Row: {
+          captured_at: string
+          client_id: string
+          consent_text: string | null
+          consent_type: string
+          created_at: string
+          form_version: string | null
+          id: string
+          lead_id: string
+          source: string | null
+          status: string
+          withdrawn_at: string | null
+        }
+        Insert: {
+          captured_at?: string
+          client_id: string
+          consent_text?: string | null
+          consent_type: string
+          created_at?: string
+          form_version?: string | null
+          id?: string
+          lead_id: string
+          source?: string | null
+          status: string
+          withdrawn_at?: string | null
+        }
+        Update: {
+          captured_at?: string
+          client_id?: string
+          consent_text?: string | null
+          consent_type?: string
+          created_at?: string
+          form_version?: string | null
+          id?: string
+          lead_id?: string
+          source?: string | null
+          status?: string
+          withdrawn_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_consents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_consents_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_notes: {
+        Row: {
+          author_id: string
+          client_id: string
+          created_at: string
+          id: string
+          is_pinned: boolean
+          lead_id: string
+          note: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          client_id: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          lead_id: string
+          note: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          client_id?: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          lead_id?: string
+          note?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_notes_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_notes_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_notes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_source_events: {
+        Row: {
+          client_id: string
+          created_at: string
+          external_event_id: string | null
+          id: string
+          lead_id: string
+          raw_payload: Json | null
+          received_at: string
+          source: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          external_event_id?: string | null
+          id?: string
+          lead_id: string
+          raw_payload?: Json | null
+          received_at?: string
+          source: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          external_event_id?: string | null
+          id?: string
+          lead_id?: string
+          raw_payload?: Json | null
+          received_at?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_source_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_source_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          age_group: string | null
+          assigned_to: string | null
+          child_age_months: number | null
+          client_id: string
+          closed_at: string | null
+          consent_status: string
+          converted_at: string | null
+          created_at: string
+          desired_start_date: string | null
+          email: string | null
+          first_name: string | null
+          id: string
+          last_contacted_at: string | null
+          last_name: string | null
+          lead_source: string
+          location_id: string | null
+          next_action_at: string | null
+          normalized_email: string | null
+          normalized_phone: string | null
+          phone: string | null
+          preferred_contact_method: string | null
+          priority: string | null
+          program_id: string | null
+          qualification_score: number | null
+          qualification_status: string | null
+          schedule_preference: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          age_group?: string | null
+          assigned_to?: string | null
+          child_age_months?: number | null
+          client_id: string
+          closed_at?: string | null
+          consent_status?: string
+          converted_at?: string | null
+          created_at?: string
+          desired_start_date?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          last_name?: string | null
+          lead_source?: string
+          location_id?: string | null
+          next_action_at?: string | null
+          normalized_email?: string | null
+          normalized_phone?: string | null
+          phone?: string | null
+          preferred_contact_method?: string | null
+          priority?: string | null
+          program_id?: string | null
+          qualification_score?: number | null
+          qualification_status?: string | null
+          schedule_preference?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          age_group?: string | null
+          assigned_to?: string | null
+          child_age_months?: number | null
+          client_id?: string
+          closed_at?: string | null
+          consent_status?: string
+          converted_at?: string | null
+          created_at?: string
+          desired_start_date?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          last_name?: string | null
+          lead_source?: string
+          location_id?: string | null
+          next_action_at?: string | null
+          normalized_email?: string | null
+          normalized_phone?: string | null
+          phone?: string | null
+          preferred_contact_method?: string | null
+          priority?: string | null
+          program_id?: string | null
+          qualification_score?: number | null
+          qualification_status?: string | null
+          schedule_preference?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "client_locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       location_business_hours: {
         Row: {
           client_id: string
@@ -739,6 +1079,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_edit_leads: { Args: { target_client_id: string }; Returns: boolean }
       has_client_access: {
         Args: { target_client_id: string }
         Returns: boolean

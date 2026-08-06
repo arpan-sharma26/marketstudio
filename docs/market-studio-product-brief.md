@@ -669,6 +669,9 @@ Do not prioritize these until the core workflow is stable:
 * Fully autonomous advertising budget management
 * Advanced social-media publishing across every platform
 * Proprietary video generation
+* Dedicated local SEO and GEO (AI-search visibility) module — planned as Phase 10 after
+  campaigns/reporting; early footholds include Google Business Profile fields, presence
+  audit, and approved FAQs/claims
 * Payroll or employee management
 * Child attendance tracking
 * Full daycare-management software
@@ -679,6 +682,14 @@ Do not prioritize these until the core workflow is stable:
 * Enrolment acceptance or rejection decisions
 
 Market Studio is a marketing and lead-management platform, not a daycare operations or childcare-record system.
+
+### Planned channel stack (after MVP core)
+
+Once leads, tours, content, and basic reporting are stable:
+
+1. Meta Ads (Facebook / Instagram) and Google Ads campaign management + attribution
+2. Deeper Google Business Profile / local presence workflows
+3. Local SEO + GEO recommendations grounded in approved brand and location data
 
 ---
 

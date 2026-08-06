@@ -484,6 +484,13 @@ Fields:
 •	created_at timestamptz
 •	updated_at timestamptz
 Do not store detailed medical or developmental information in this table.
+Suggested statuses:
+•	new, contact_attempted, contacted, qualified, unqualified, tour_offered,
+	tour_booked, tour_completed, tour_missed, application_started, waitlisted,
+	enrolled, not_interested, no_response, duplicate, closed
+Suggested lead_source values:
+•	manual, website, phone, email, referral, meta, google_ads, google_business,
+	walk_in, other
 ________________________________________
 Table: lead_source_events
 Purpose:

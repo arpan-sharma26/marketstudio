@@ -445,6 +445,118 @@ async function main() {
     { onConflict: "client_id,task_key" },
   );
 
+  console.log("Seeding leads…");
+  // Replace seed leads for this client so re-runs stay idempotent.
+  const { data: existingSeedLeads } = await supabase
+    .from("leads")
+    .select("id")
+    .eq("client_id", clientId)
+    .in("normalized_email", [
+      "jamie.parent@example.test",
+      "sam.family@example.test",
+      "alex.tour@example.test",
+    ]);
+  const seedLeadIds = (existingSeedLeads ?? []).map((row) => row.id);
+  if (seedLeadIds.length > 0) {
+    await supabase.from("lead_consents").delete().in("lead_id", seedLeadIds);
+    await supabase.from("lead_notes").delete().in("lead_id", seedLeadIds);
+    await supabase.from("lead_activities").delete().in("lead_id", seedLeadIds);
+    await supabase.from("lead_source_events").delete().in("lead_id", seedLeadIds);
+    await supabase.from("leads").delete().in("id", seedLeadIds);
+  }
+
+  const leadSeeds = [
+    {
+      first_name: "Jamie",
+      last_name: "Parent",
+      email: "jamie.parent@example.test",
+      phone: "4035550101",
+      status: "new" as const,
+      lead_source: "website" as const,
+      location_id: calgary.id,
+      assigned_to: clientAdminId,
+      consent_status: "granted" as const,
+      priority: "high" as const,
+      age_group: "Toddler",
+    },
+    {
+      first_name: "Sam",
+      last_name: "Family",
+      email: "sam.family@example.test",
+      phone: "4035550102",
+      status: "qualified" as const,
+      lead_source: "referral" as const,
+      location_id: calgary.id,
+      assigned_to: locationManagerId,
+      consent_status: "granted" as const,
+      priority: "normal" as const,
+      age_group: "Preschool",
+    },
+    {
+      first_name: "Alex",
+      last_name: "Tour",
+      email: "alex.tour@example.test",
+      phone: "2045550103",
+      status: "tour_booked" as const,
+      lead_source: "manual" as const,
+      location_id: locations.find((l) => l.slug === "winnipeg")?.id ?? null,
+      assigned_to: clientAdminId,
+      consent_status: "unknown" as const,
+      priority: "normal" as const,
+      age_group: "Infant",
+    },
+  ];
+
+  for (const seed of leadSeeds) {
+    const normalized_email = seed.email.toLowerCase();
+    const normalized_phone = seed.phone;
+    const { data: lead, error: leadError } = await supabase
+      .from("leads")
+      .insert({
+        client_id: clientId,
+        ...seed,
+        normalized_email,
+        normalized_phone,
+        preferred_contact_method: "email",
+        qualification_status: seed.status === "new" ? "unreviewed" : "qualified",
+      })
+      .select("id")
+      .single();
+    if (leadError) throw leadError;
+
+    await supabase.from("lead_source_events").insert({
+      client_id: clientId,
+      lead_id: lead.id,
+      source: seed.lead_source,
+      raw_payload: { via: "seed" },
+    });
+    await supabase.from("lead_activities").insert({
+      client_id: clientId,
+      lead_id: lead.id,
+      activity_type: "lead_created",
+      title: "Lead created",
+      description: `Seeded from ${seed.lead_source}`,
+      performed_by: clientAdminId,
+      metadata: {},
+    });
+    if (seed.consent_status === "granted") {
+      await supabase.from("lead_consents").insert({
+        client_id: clientId,
+        lead_id: lead.id,
+        consent_type: "general_enquiry_follow_up",
+        status: "granted",
+        source: "seed",
+      });
+    }
+    await supabase.from("lead_notes").insert({
+      client_id: clientId,
+      lead_id: lead.id,
+      author_id: clientAdminId,
+      note: "Seed note: follow up within one business day.",
+      is_pinned: seed.status === "new",
+    });
+  }
+
   console.log("\nSeed complete. Development sign-in credentials:");
   console.table([
     { role: "Market Studio admin", email: USERS.admin.email, password: SEED_PASSWORD },
