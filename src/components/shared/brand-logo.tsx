@@ -14,7 +14,7 @@ interface BrandLogoProps {
 const SIZE_MAP = {
   sm: { width: 120, height: 137, className: "h-14 w-auto" },
   md: { width: 160, height: 183, className: "h-[4.5rem] w-auto" },
-  lg: { width: 220, height: 251, className: "h-24 w-auto" },
+  lg: { width: 240, height: 274, className: "h-28 w-auto" },
   hero: { width: 320, height: 365, className: "h-36 w-auto sm:h-40" },
 } as const;
 

@@ -16,6 +16,7 @@ import {
 import {
   addLeadNoteSchema,
   createLeadSchema,
+  deleteLeadSchema,
   recordLeadConsentSchema,
   updateLeadSchema,
   updateLeadStatusSchema,
@@ -391,6 +392,37 @@ export async function updateLeadStatusAction(
       performedBy: ctx.profile.id,
       metadata: { from: existing.status, to: status },
     });
+  }
+
+  revalidateLeadPaths(clientId, leadId);
+  return actionSuccess(undefined);
+}
+
+export async function deleteLeadAction(
+  _prev: ActionResult<void> | null,
+  formData: FormData,
+): Promise<ActionResult<void>> {
+  const parsed = deleteLeadSchema.safeParse({
+    clientId: formData.get("clientId"),
+    leadId: formData.get("leadId"),
+  });
+  if (!parsed.success) {
+    return actionError("Invalid lead delete request.", toFieldErrors(parsed.error));
+  }
+
+  const { clientId, leadId } = parsed.data;
+  await requirePermission("lead.delete", { clientId });
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("leads")
+    .delete()
+    .eq("id", leadId)
+    .eq("client_id", clientId);
+
+  if (error) {
+    console.error("deleteLeadAction failed", error.message);
+    return actionError("Could not delete the lead.");
   }
 
   revalidateLeadPaths(clientId, leadId);

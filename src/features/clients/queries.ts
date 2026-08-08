@@ -59,6 +59,7 @@ export async function getClientCapabilities(clientId: string) {
     canReadLeads: can(ctx, "lead.read", { clientId }),
     canUpdateLeads: can(ctx, "lead.update", { clientId }),
     canAssignLeads: can(ctx, "lead.assign", { clientId }),
+    canDeleteLeads: can(ctx, "lead.delete", { clientId }),
     canCreateClient: isPlatformAdmin(ctx),
   };
 }

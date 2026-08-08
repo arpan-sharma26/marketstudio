@@ -26,9 +26,9 @@ interface AppShellProps {
 export function AppShell({ userName, userEmail, children }: AppShellProps) {
   return (
     <div className="flex min-h-screen bg-brand-mist">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200/80 bg-paper-elevated/90 backdrop-blur md:flex">
-        <div className="flex justify-center border-b border-slate-200/80 px-4 py-5">
-          <BrandLogo size="md" priority />
+      <aside className="hidden w-72 shrink-0 flex-col border-r border-slate-200/80 bg-paper-elevated/90 backdrop-blur md:flex">
+        <div className="flex justify-center border-b border-slate-200/80 px-2 py-3">
+          <BrandLogo size="hero" priority className="h-44 w-auto sm:h-44" />
         </div>
         <div className="brand-gradient-bar" aria-hidden />
         <AppNav items={NAV_ITEMS} />

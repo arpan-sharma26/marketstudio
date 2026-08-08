@@ -5,11 +5,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CityCombobox } from "@/features/audits/components/city-combobox";
 import { CountryCombobox } from "@/features/audits/components/country-combobox";
-import type { AuditInput } from "@/features/audits/types";
+import { getCountryNameByCode } from "@/features/audits/countries";
+import type { AuditClientOption, AuditInput } from "@/features/audits/types";
 
 interface AuditFormProps {
   onSubmit: (input: AuditInput) => Promise<void>;
   loading: boolean;
+  /** Existing clients the form can be pre-filled from. */
+  clientOptions: AuditClientOption[];
 }
 
 const defaultValues: AuditInput = {
@@ -34,11 +37,38 @@ const sampleDaycare: AuditInput = {
   notes: "Enrollment push for September. Wants more tour bookings.",
 };
 
-export function AuditForm({ onSubmit, loading }: AuditFormProps) {
+export function AuditForm({ onSubmit, loading, clientOptions }: AuditFormProps) {
   const [form, setForm] = useState<AuditInput>(defaultValues);
+  const [selectedClientId, setSelectedClientId] = useState("");
 
   function updateField<K extends keyof AuditInput>(key: K, value: AuditInput[K]) {
     setForm((current) => ({ ...current, [key]: value }));
+  }
+
+  function applyExistingClient(clientId: string) {
+    setSelectedClientId(clientId);
+    if (!clientId) return;
+
+    const client = clientOptions.find((option) => option.id === clientId);
+    if (!client) return;
+
+    // Audits are city-scoped, so fall back to the client's first location for city
+    // and contact details when the client record itself has none.
+    const location = client.locations[0];
+
+    setForm((current) => ({
+      ...current,
+      businessName: client.name,
+      country:
+        getCountryNameByCode(client.countryCode ?? location?.countryCode ?? "") ??
+        current.country,
+      city: location ? `${location.city}, ${location.provinceCode}` : "",
+      websiteUrl: client.websiteUrl ?? location?.websiteUrl ?? "",
+      gbpUrl: location?.gbpUrl ?? "",
+      // Review metrics are not tracked on the client record yet.
+      reviewCount: undefined,
+      averageRating: undefined,
+    }));
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -52,12 +82,37 @@ export function AuditForm({ onSubmit, loading }: AuditFormProps) {
         <h2 className="text-lg font-semibold text-slate-900">Business details</h2>
         <button
           type="button"
-          onClick={() => setForm(sampleDaycare)}
+          onClick={() => {
+            setSelectedClientId("");
+            setForm(sampleDaycare);
+          }}
           className="text-xs font-semibold text-brand-700 hover:text-brand-800"
         >
           Load sample
         </button>
       </div>
+
+      {clientOptions.length > 0 && (
+        <Field label="Existing client">
+          <select
+            value={selectedClientId}
+            disabled={loading}
+            onChange={(e) => applyExistingClient(e.target.value)}
+            className={inputClass}
+          >
+            <option value="">Enter a new prospect manually</option>
+            {clientOptions.map((client) => (
+              <option key={client.id} value={client.id}>
+                {client.name}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-ink-muted">
+            Pick a daycare already in Market Studio to pre-fill the fields below. You can
+            still edit anything before running the audit.
+          </p>
+        </Field>
+      )}
 
       <Field label="Center name">
         <input

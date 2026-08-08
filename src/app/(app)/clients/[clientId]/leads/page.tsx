@@ -10,6 +10,7 @@ import {
   getClient,
   getClientCapabilities,
 } from "@/features/clients/queries";
+import { DeleteLeadButton } from "@/features/leads/components/delete-lead-button";
 import { LeadPipelineBoard } from "@/features/leads/components/lead-pipeline-board";
 import {
   formatLeadStatus,
@@ -154,13 +155,22 @@ export default async function ClientLeadsPage({
                     <td className="px-4 py-3 capitalize text-slate-700">
                       {lead.consent_status}
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      <PendingNavLink
-                        href={`/clients/${clientId}/leads/${lead.id}`}
-                        className="font-medium text-brand-700 hover:underline"
-                      >
-                        Open
-                      </PendingNavLink>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-3">
+                        <PendingNavLink
+                          href={`/clients/${clientId}/leads/${lead.id}`}
+                          className="font-medium text-brand-700 hover:underline"
+                        >
+                          Open
+                        </PendingNavLink>
+                        {capabilities.canDeleteLeads ? (
+                          <DeleteLeadButton
+                            clientId={clientId}
+                            leadId={lead.id}
+                            leadName={leadDisplayName(lead)}
+                          />
+                        ) : null}
+                      </div>
                     </td>
                   </tr>
                 ))}

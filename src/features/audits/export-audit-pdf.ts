@@ -27,6 +27,12 @@ const PAGE_HEIGHT = 297;
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
 const FOOTER_Y = PAGE_HEIGHT - 14;
 
+/** Header geometry. Logo dimensions keep the source portrait ratio (897×1024). */
+const HEADER = {
+  cover: { band: 32, logoX: MARGIN, logoY: 3.5, logoW: 21, logoH: 24 },
+  page: { band: 25, logoX: MARGIN, logoY: 2.5, logoW: 16, logoH: 18.3 },
+} as const;
+
 type RGB = readonly [number, number, number];
 
 export interface ExportAuditPdfOptions {
@@ -116,35 +122,48 @@ export async function exportAuditPdf({
     doc.addPage();
     page += 1;
     drawPageChrome(false);
-    y = 42;
+    y = HEADER.page.band + 12;
   }
 
   function drawPageChrome(isCover: boolean) {
+    const header = isCover ? HEADER.cover : HEADER.page;
+
     // Soft paper background tint via top/bottom brand accents.
     setFill(COLORS.navy);
-    doc.rect(0, 0, PAGE_WIDTH, isCover ? 36 : 28, "F");
+    doc.rect(0, 0, PAGE_WIDTH, header.band, "F");
     setFill(COLORS.teal);
-    doc.rect(0, isCover ? 36 : 28, PAGE_WIDTH, 2.2, "F");
+    doc.rect(0, header.band, PAGE_WIDTH, 2.2, "F");
     setFill(COLORS.mint);
-    doc.rect(0, isCover ? 38.2 : 30.2, PAGE_WIDTH, 1.2, "F");
+    doc.rect(0, header.band + 2.2, PAGE_WIDTH, 1.2, "F");
 
     if (logoDataUrl) {
-      // Portrait logo — keep compact in the header.
       try {
-        doc.addImage(logoDataUrl, "PNG", MARGIN, isCover ? 6 : 4, 14, 16);
+        doc.addImage(
+          logoDataUrl,
+          "PNG",
+          header.logoX,
+          header.logoY,
+          header.logoW,
+          header.logoH,
+        );
       } catch {
         // Ignore logo decode issues; text brand still renders.
       }
     }
 
+    const textX = MARGIN + (logoDataUrl ? header.logoW + 4 : 0);
     setText(COLORS.white);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(isCover ? 16 : 12);
-    doc.text(BRAND.name, MARGIN + (logoDataUrl ? 18 : 0), isCover ? 14 : 12);
+    doc.text(BRAND.name, textX, isCover ? 14 : 12);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     setText(COLORS.mint);
-    doc.text(isCover ? "AI Presence Audit Report" : "AI Presence Audit", MARGIN + (logoDataUrl ? 18 : 0), isCover ? 21 : 18);
+    doc.text(
+      isCover ? "AI Presence Audit Report" : "AI Presence Audit",
+      textX,
+      isCover ? 21 : 18,
+    );
     setText(COLORS.white);
     doc.setFontSize(8);
     doc.text(generatedLabel, PAGE_WIDTH - MARGIN, isCover ? 14 : 12, { align: "right" });
@@ -194,7 +213,7 @@ export async function exportAuditPdf({
 
   // --- Cover / header block ---
   drawPageChrome(true);
-  y = 52;
+  y = HEADER.cover.band + 16;
 
   setText(COLORS.navy);
   doc.setFont("helvetica", "bold");

@@ -81,6 +81,11 @@ export const updateLeadStatusSchema = z.object({
   status: z.enum(LEAD_STATUSES),
 });
 
+export const deleteLeadSchema = z.object({
+  clientId: z.string().uuid(),
+  leadId: z.string().uuid(),
+});
+
 export const addLeadNoteSchema = z.object({
   clientId: z.string().uuid(),
   leadId: z.string().uuid(),

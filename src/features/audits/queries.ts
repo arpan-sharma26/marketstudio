@@ -1,8 +1,64 @@
 import "server-only";
 
+import { listClients } from "@/features/clients/queries";
+import { loadAuthContext } from "@/lib/auth";
+import { canAccessLocation } from "@/lib/permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { AuditInput, AuditResult, SavedAudit } from "@/features/audits/types";
+import { createClient } from "@/lib/supabase/server";
+import type {
+  AuditClientOption,
+  AuditInput,
+  AuditResult,
+  SavedAudit,
+} from "@/features/audits/types";
 import type { Json } from "@/types/database";
+
+/**
+ * Clients (and their locations) the authenticated user may audit, so the audit form can be
+ * pre-filled from existing records instead of retyping prospect details.
+ */
+export async function listAuditClientOptions(): Promise<AuditClientOption[]> {
+  const ctx = await loadAuthContext();
+  if (!ctx) return [];
+
+  const clients = await listClients();
+  if (clients.length === 0) return [];
+
+  const supabase = await createClient();
+  const { data: locations, error } = await supabase
+    .from("client_locations")
+    .select(
+      "id, client_id, name, city, province_code, country_code, website_url, google_business_profile_url",
+    )
+    .in(
+      "client_id",
+      clients.map((client) => client.id),
+    )
+    .order("name", { ascending: true });
+  if (error) throw error;
+
+  const accessible = (locations ?? []).filter((location) =>
+    canAccessLocation(ctx, location.client_id, location.id),
+  );
+
+  return clients.map((client) => ({
+    id: client.id,
+    name: client.name,
+    countryCode: client.country_code,
+    websiteUrl: client.website_url,
+    locations: accessible
+      .filter((location) => location.client_id === client.id)
+      .map((location) => ({
+        id: location.id,
+        name: location.name,
+        city: location.city,
+        provinceCode: location.province_code,
+        countryCode: location.country_code,
+        websiteUrl: location.website_url,
+        gbpUrl: location.google_business_profile_url,
+      })),
+  }));
+}
 
 /**
  * Persists a generated audit using the service-role client. The `audits` table has RLS

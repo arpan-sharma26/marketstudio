@@ -48,6 +48,7 @@ export const PERMISSIONS = [
   "lead.read",
   "lead.update",
   "lead.assign",
+  "lead.delete",
   "content.read",
   "content.create",
   "content.approve",

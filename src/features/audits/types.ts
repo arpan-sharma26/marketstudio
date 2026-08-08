@@ -9,6 +9,25 @@ export interface AuditInput {
   notes?: string;
 }
 
+export interface AuditClientLocationOption {
+  id: string;
+  name: string;
+  city: string;
+  provinceCode: string;
+  countryCode: string;
+  websiteUrl: string | null;
+  gbpUrl: string | null;
+}
+
+/** An existing client the audit form can be pre-filled from. */
+export interface AuditClientOption {
+  id: string;
+  name: string;
+  countryCode: string;
+  websiteUrl: string | null;
+  locations: AuditClientLocationOption[];
+}
+
 export interface AuditIssue {
   title: string;
   severity: "high" | "medium" | "low";

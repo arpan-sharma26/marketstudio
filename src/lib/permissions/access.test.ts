@@ -145,6 +145,13 @@ describe("named permissions by role", () => {
     expect(can(clientAdminCtx, "brand.approve", { clientId: CLIENT_A })).toBe(true);
     expect(can(clientAdminCtx, "onboarding.manage", { clientId: CLIENT_A })).toBe(true);
     expect(can(clientAdminCtx, "membership.manage", { clientId: CLIENT_A })).toBe(true);
+    expect(can(clientAdminCtx, "lead.delete", { clientId: CLIENT_A })).toBe(true);
+  });
+
+  it("restricts lead deletion to client managers", () => {
+    expect(can(viewerCtx, "lead.delete", { clientId: CLIENT_A })).toBe(false);
+    expect(can(locationManagerCtx, "lead.delete", { clientId: CLIENT_A })).toBe(false);
+    expect(can(platformAdminCtx, "lead.delete", { clientId: CLIENT_A })).toBe(true);
   });
 
   it("limits viewers to read-only permissions", () => {

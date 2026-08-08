@@ -40,6 +40,13 @@ export function getCountryCodeByName(countryName: string): string | undefined {
   return startsWith?.code;
 }
 
+/** Resolve an ISO code to its display name (e.g. "CA" → "Canada"). */
+export function getCountryNameByCode(countryCode: string): string | undefined {
+  const trimmed = countryCode.trim().toUpperCase();
+  if (!trimmed) return undefined;
+  return getAllCountries().find((country) => country.code === trimmed)?.name;
+}
+
 export function filterCountries(query: string, limit = 12): CountryOption[] {
   const countries = getAllCountries();
   const trimmed = query.trim().toLowerCase();
